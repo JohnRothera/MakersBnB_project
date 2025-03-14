@@ -350,14 +350,13 @@ input[type="submit"]:hover {
     grid-template-columns: repeat(3, 1fr);
     justify-content: center;
     box-shadow: var(--shadow-md);
-
 }
 
 .preview-spaces-container {
     justify-content: center;
     margin: var(--spacing-lg) 0;
     box-shadow: var(--shadow-md);
-    border: 2px solid red;
+    /* border: 2px solid red; */
 }
 
 .space-card {
@@ -374,6 +373,8 @@ input[type="submit"]:hover {
 }
 .preview-space-card {
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     text-align: left;
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -387,7 +388,10 @@ input[type="submit"]:hover {
 }
 
 .preview-space-header {
+    display: absolute;
+    height: 32%;
     white-space: nowrap;
+    /* border: 2px solid blue; */
 }
 
 .preview-space-header h2 {
@@ -395,15 +399,22 @@ input[type="submit"]:hover {
     margin-bottom: var(--spacing-md);
 }
 
-.preview-space-card-description {
-    display: grid;
-    grid-template-rows: 3fr 1fr;
-    gap: var(--spacing-sm);
-    border: 2px solid green;
+.preview-space-location {
+    color: var(--text-medium);
+    font-size: 14px;
+    /* margin-bottom: var(--spacing-xs); */
+}
+
+.preview-space-description {
+    display: absolute;
+    margin-bottom: auto;
+    /* border: 2px solid green; */
 }
 
 .preview-space-action {
-
+    display: absolute;
+    margin-left: auto;
+    /* border: 2px solid orange; */
 }
 /* .founder-card {
     border-radius: var(--radius-lg);
@@ -485,16 +496,6 @@ input[type="submit"]:hover {
 .space-price {
     font-weight: 600;
     margin-top: var(--spacing-sm);
-}
-
-.preview-space-location {
-    color: var(--text-medium);
-    font-size: 14px;
-    /* margin-bottom: var(--spacing-xs); */
-}
-
-.preview-space-description {
-
 }
 
 /* Footer */
