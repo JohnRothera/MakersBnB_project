@@ -50,9 +50,9 @@ class Booking:
     def mark_as_approved(self):
         self.approved = True
 
-    def deny_booking(self):
+    # def deny_booking(self):
         
-        self.approved = False
+    #     self.approved = False
 
 
     @classmethod
@@ -72,7 +72,7 @@ class Booking:
 
         # Set attributes directly
         instance.id = id
-        instance.requested_dates_list = requested_dates_list.split(",")
+        instance.requested_dates_list = requested_dates_list[1:-1].split(", ")
         instance.user_id = user_id
         instance.space_id = space_id
         instance.subtotal = subtotal
