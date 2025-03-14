@@ -850,6 +850,13 @@ footer {
     height: 100px;
 }
 
+.image-gif {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+  }
+
 * {
     margin: 0;
     padding: 0;
