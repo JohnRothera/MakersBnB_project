@@ -1,6 +1,6 @@
 import functools
 import os
-from flask import Flask, request, render_template, session, redirect, url_for
+from flask import Flask, request, render_template, session, redirect, url_for, abort
 from lib.database_connection import get_flask_database_connection
 from lib.user_repository import UserRepository
 from lib.user import User
@@ -40,9 +40,29 @@ def update_dates_dictionary_from_requested_dates_list_mark_as_available(
     available_dates_dict, requested_dates_list
 ):
     for date in requested_dates_list:
-        available_dates_dict[date] = True
+        available_dates_dict[date[1:-1]] = True
     return available_dates_dict
 
+
+@app.route('/spaces/manage/approve/<booking_id>', methods=['GET'])
+def approve_booking_request(booking_id):
+    connection = get_flask_database_connection(app)
+    booking_repository = BookingRepository(connection)
+    booking = booking_repository.find(booking_id)
+    booking.mark_as_approved()
+    booking_repository.update_approval(booking_id, True)    
+    return redirect('/spaces')
+
+@app.route('/spaces/manage/deny/<booking_id>', methods=['GET'])
+def deny_booking_request(booking_id):
+    connection = get_flask_database_connection(app)
+    space_repository = SpaceRepository(connection)
+    booking_repository = BookingRepository(connection)
+    booking = booking_repository.find(booking_id)
+    space = space_repository.find(booking.space_id)
+    restore_availability_upon_denied_booking_request(space, booking)
+    booking_repository.delete(booking_id)
+    return redirect('/spaces')
 
 # WELCOME ROUTES
 @app.route("/", methods=["GET"])
@@ -133,12 +153,8 @@ def display_spaces_page():
     connection = get_flask_database_connection(app)
     repository = SpaceRepository(connection)
     spaces = repository.all()
-    if "username" in session and session["username"] != None:
-        username = f"{session['username']}"
-        return render_template("spaces.html", spaces=spaces, username=username)
-    else:
-        username = "Not logged in"
-        return render_template("spaces.html", spaces=spaces, username=username)
+    username = _get_logged_in_user()
+    return render_template("spaces.html", spaces=spaces, username=username)
 
 
 @app.route("/spaces/new", methods=["GET"])
@@ -193,25 +209,33 @@ def get_individual_space(space_id):
     connection = get_flask_database_connection(app)
     repository = SpaceRepository(connection)
     users_repository = UserRepository(connection)
-    space = repository.find(space_id)
+    username = _get_logged_in_user()
 
+    _is_valid_space_id(space_id, repository)
+    
+    space = repository.find(space_id)
     trying_to_view_own_space = False
+
+    trying_to_view_own_space = (
+    username == session.get('username') and 
+    users_repository.find_by_username(username).id == space.user_id
+    )
+
     user = users_repository.find_by_id(space.user_id)
-    if "username" in session and session["username"] != None:
-        username = f"{session['username']}"
-        if users_repository.find_by_username(username).id == space.user_id:
-            trying_to_view_own_space = True
-    else:
-        username = "Not logged in"
     return render_template(
         "single_space.html",
         username=username,
         space=space,
         trying_to_view_own_space=trying_to_view_own_space,
-        user = user,
+        user = user
     )
-
-
+def _is_valid_space_id(space_id, repository):
+    try:
+        if int(space_id) > len(repository.all()):
+            abort(404)
+    except ValueError:
+        abort(404)
+        
 # SPACES ROUTES
 
 
@@ -339,13 +363,9 @@ def confirm_booking(space_id):
     return redirect(f"/bookings/{booking.id}/confirmation")
 
 # Route contains this info somehow /user/<username>/manage/<space_id>
-def restore_availability_upon_denied_booking_request(space_id, booking_id):
+def restore_availability_upon_denied_booking_request(space, booking):
     connection = get_flask_database_connection(app)
     space_repository = SpaceRepository(connection)
-    booking_repository = BookingRepository(connection)
-    booking = booking_repository.find(booking_id)
-    booking.deny_booking()
-    space = space_repository.find(space_id)
     updated_dates_dict = update_dates_dictionary_from_requested_dates_list_mark_as_available(
         space.dates_available_dict, booking.requested_dates_list
     )
@@ -435,6 +455,8 @@ def manage_space(space_id):
     space_repository = SpaceRepository(connection)
     booking_repository = BookingRepository(connection)
     username = _get_logged_in_user()
+
+    _is_valid_space_id(space_id, space_repository)
 
     user = user_repository.find_by_username(username)
     bookings = booking_repository.find_by_space(space_id) #taking all booking for now
@@ -527,7 +549,7 @@ def form():
 def handle_http_error(e):
     username = _get_logged_in_user()
     error_code = e.code
-    return render_template(f'{error_code}.html', username=username), error_code
+    return render_template(f'404.html', username=username), error_code
 
 def _get_logged_in_user():
     if "username" in session and session["username"] is not None:

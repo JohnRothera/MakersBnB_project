@@ -47,14 +47,14 @@ class BookingRepository:
 
         row = rows[0]
 
-        # Convert requested_dates from string to list if stored as JSON
-        requested_dates_list = row["requested_dates_list"]
-        if isinstance(requested_dates_list, str):
-            try:
-                requested_dates = json.loads(requested_dates)
-            except:
-                # If not valid JSON, keep as is (might be a plain string list)
-                pass
+        # # Convert requested_dates from string to list if stored as JSON
+        # requested_dates_list = row["requested_dates_list"]
+        # if isinstance(requested_dates_list, str):
+        #     try:
+        #         requested_dates = json.loads(requested_dates)
+        #     except:
+        #         # If not valid JSON, keep as is (might be a plain string list)
+        #         pass
 
         return Booking.from_database(
             row["id"],
@@ -150,3 +150,6 @@ class BookingRepository:
 
     def delete(self, booking_id):
         self._connection.execute("DELETE FROM bookings WHERE id = %s", [booking_id])
+
+    def update_approval(self, booking_id, approved: bool):
+        self._connection.execute("UPDATE bookings SET approved = %s where bookings.id = %s", [str(approved), booking_id])
