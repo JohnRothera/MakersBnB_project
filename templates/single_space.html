@@ -21,7 +21,7 @@
                 <a href="/logout" class="btn btn-secondary">Log Out</a>
                 {% endif %}
             </div>
-        </div>
+            </div>
     </header>
 
     <main>
@@ -38,9 +38,9 @@
                 <div class="single-space-content">
                     <div class="single-space-header">
                         <h1 class="single-space-title">{{space.name}}</h1>
-                        
+
                         <p class='single-space-location'>Listed by {{ user.username }}</p>
-                        
+
                         <p class="single-space-location">{{space.location}}</p>
                     </div>
 
@@ -68,7 +68,8 @@
                         <div class="single-space-booking">
                             <div class="booking-card">
                                 <form class="mt-3">
-                                    <a href="/spaces" class="btn btn-lg btn-full">LOOK AT ME</a>
+                                    <a href="/spaces/manage/{{space.id}}" class="btn btn-lg btn-full">Manage Your
+                                        Property</a>
                                 </form>
                             </div>
                         </div>
