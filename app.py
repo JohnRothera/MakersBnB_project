@@ -60,7 +60,7 @@ def deny_booking_request(booking_id):
     booking_repository = BookingRepository(connection)
     booking = booking_repository.find(booking_id)
     space = space_repository.find(booking.space_id)
-    restore_availability_upon_denied_booking_request(space.id, booking_id)
+    restore_availability_upon_denied_booking_request(space, booking)
     booking_repository.delete(booking_id)
     return redirect('/spaces')
 
@@ -358,13 +358,9 @@ def confirm_booking(space_id):
     return redirect(f"/bookings/{booking.id}/confirmation")
 
 # Route contains this info somehow /user/<username>/manage/<space_id>
-def restore_availability_upon_denied_booking_request(space_id, booking_id):
+def restore_availability_upon_denied_booking_request(space, booking):
     connection = get_flask_database_connection(app)
     space_repository = SpaceRepository(connection)
-    booking_repository = BookingRepository(connection)
-    booking = booking_repository.find(booking_id)
-    # booking.deny_booking()
-    space = space_repository.find(space_id)
     updated_dates_dict = update_dates_dictionary_from_requested_dates_list_mark_as_available(
         space.dates_available_dict, booking.requested_dates_list
     )

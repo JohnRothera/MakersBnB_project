@@ -152,4 +152,4 @@ class BookingRepository:
         self._connection.execute("DELETE FROM bookings WHERE id = %s", [booking_id])
 
     def update_approval(self, booking_id, approved: bool):
-        self._connection.execute("UPDATE bookings SET approved = %s where bookings.id = %s", [str(approved).lower(), booking_id])
+        self._connection.execute("UPDATE bookings SET approved = %s where bookings.id = %s", [str(approved), booking_id])
