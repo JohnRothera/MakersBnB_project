@@ -31,7 +31,7 @@
                 <p>Have a look at your listed spaces, or add another!</p>
                 <a href="/spaces/new" class="btn mt-3">List a New Space</a>
             </div>
-                <!-- Left side: Spaces -->
+            <!-- Left side: Spaces -->
             <div class="preview-spaces-container">
                 {% if spaces %}
                 <div class="preview-spaces-grid">
@@ -42,7 +42,7 @@
                             <p class="preview-space-location">{{ space.location }}</p>
                             <p class="preview-space-description">{{ space.description }}</p>
                             <div class="space-actions">
-                                <a href="/spaces/{{ space.id }}" class="btn btn-secondary">View Details</a>
+                                <a href="/spaces/manage/{{space.id}}" class="btn btn-secondary">Manage This Property</a>
                             </div>
                         </div>
                     </div>
