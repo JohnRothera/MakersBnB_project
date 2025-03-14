@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MakersBnB - Manage Properties</title>
-  <link rel="stylesheet" href="/static/styles.css">
-</head>
-
+  
 <body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakersBnB - Manage Properties</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
 
+  <main>
     <header>
         <nav class="navbar">
             <a href="/" class="logo">MakersBnB</a>
@@ -26,43 +26,52 @@
         </div>
     </header>
 
-  <div class="container">
-    <h2>Requested Bookings <h4>{{space.name}}</h4></h2>
-    <ul class="responsive-table">
-      <li class="table-header">
-        <div class="col col-1">ID</div>
-        <div class="col col-2">Selected Dates</div>
-        <div class="col col-3">Total</div>
-        <div class="col col-4">Approve / Deny</div>
-      </li>
+    <div class="container vm-25">
+      <h2>Requested Bookings <h4>{{space.name}}</h4></h2>
+      <ul class="responsive-table">
+        <li class="table-header">
+          <div class="col col-1">ID</div>
+          <div class="col col-2">Selected Dates</div>
+          <div class="col col-3">Total</div>
+          <div class="col col-4">Approve / Deny</div>
+        </li>
+        {% for booking in bookings %}
+        <li class="table-row">
+          <div class="col col-1" data-label="Booking Id">{{ booking.id }}</div>
+          <div class="col col-2" data-label="Requested Dates"> {{ booking.requested_dates_list }} </div>
+          <div class="col col-3" data-label="Total">${{ booking.total }}</div>
+          <div class="col col-4" data-label="Approve / Deny">
+            <a href="/spaces/manage/approve/{{booking.id}}" class="btn mt-3">Approve</a>
+            <a href="/spaces/manage/deny/{{booking.id}}" class="btn mt-3">Deny</a>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
 
-      {% for booking in bookings %}
-      {% set start_date = booking.requested_dates_list[0] %}
-      {% set end_date = booking.requested_dates_list[] %}
+            <li class="table-row">
+              <div class="col col-1" data-label="Booking Id">{{ booking.id }}</div>
+              <div class="col col-2" data-label="Requested Dates"> {{ booking.requested_dates_list }} </div>
+              <div class="col col-3" data-label="Total">${{ booking.total }}</div>
+              <div class="col col-4" data-label="Approve / Deny">
+                <a href="/spaces/manage/approve" class="btn mt-3">Approve</a>
+                <a href="/spaces/manage/deny" class="btn mt-3">Deny</a>
+              </div>
+            </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </main>
 
-          <li class="table-row">
-            <div class="col col-1" data-label="Booking Id">{{ booking.id }}</div>
-            <div class="col col-2" data-label="Requested Dates"> {{ booking.requested_dates_list }} </div>
-            <div class="col col-3" data-label="Total">${{ booking.total }}</div>
-            <div class="col col-4" data-label="Approve / Deny">
-              <a href="/spaces/manage/approve/{{booking.id}}" class="btn mt-3">Approve</a>
-              <a href="/spaces/manage/deny/{{booking.id}}" class="btn mt-3">Deny</a>
-            </div>
-          </li>
-      {% endfor %}
-    </ul>
-  </div>
-
-    <footer>
-        <div class="container footer-content">
-            <p>© 2025 MakersBnB, Inc.</p>
-        </div>
-        <div class="footer-links">
-            <a href="/">Home</a>
-            <a href="/spaces">Spaces</a>
-            <a href="/about">About</a>
-            <a href="/contact">Contact</a>
-        </div>
-    </footer>
-
+  <footer>
+      <div class="container footer-content">
+          <p>© 2025 MakersBnB, Inc.</p>
+      </div>
+      <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="/spaces">Spaces</a>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+      </div>
+  </footer>
 </body>

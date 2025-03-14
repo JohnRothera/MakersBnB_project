@@ -28,7 +28,11 @@
 
             <h1 class="mb-4">Manage Your Properties</h1>
             <div class="no-bookings">
+                {% if spaces %}
                 <p>Have a look at your listed spaces, or add another!</p>
+                {% else %}
+                <p>You have no listed spaces, I think it might be time to add one!</p>
+                {% endif %}
                 <a href="/spaces/new" class="btn mt-3">List a New Space</a>
             </div>
             <!-- Left side: Spaces -->
@@ -37,23 +41,18 @@
                 <div class="preview-spaces-grid">
                     {% for space in spaces %}
                     <div class="preview-space-card">
-                        <div class="preview-space-card-details">
+                        <div class="preview-space-header">
                             <h2 style="margin-bottom: 0">{{ space.name }}</h2>
                             <p class="preview-space-location">{{ space.location }}</p>
-                            <p class="preview-space-description">{{ space.description }}</p>
-                            <div class="space-actions">
-                                <a href="/spaces/manage/{{space.id}}" class="btn btn-secondary">Manage This Property</a>
-                            </div>
+                        </div>
+                        <div class="preview-space-description">
+                            <p>{{ space.description }}</p>
+                        </div>
+                        <div class="preview-space-action">
+                            <a href="/spaces/manage/{{ space.id }}" class="btn btn-secondary">Manage Bookings</a>
                         </div>
                     </div>
                     {% endfor %}
-                </div>
-                {% else %}
-                <div class="empty-state">
-                    <p>{{ user.username }} hasn't listed any spaces yet.</p>
-                    {% if logged_in_username == user.username %}
-                    <a href="/spaces/new" class="btn">List a New Space</a>
-                    {% endif %}
                 </div>
                 {% endif %}
             </div>
