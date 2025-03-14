@@ -133,12 +133,8 @@ def display_spaces_page():
     connection = get_flask_database_connection(app)
     repository = SpaceRepository(connection)
     spaces = repository.all()
-    if "username" in session and session["username"] != None:
-        username = f"{session['username']}"
-        return render_template("spaces.html", spaces=spaces, username=username)
-    else:
-        username = "Not logged in"
-        return render_template("spaces.html", spaces=spaces, username=username)
+    username = _get_logged_in_user()
+    return render_template("spaces.html", spaces=spaces, username=username)
 
 
 @app.route("/spaces/new", methods=["GET"])
@@ -193,16 +189,18 @@ def get_individual_space(space_id):
     connection = get_flask_database_connection(app)
     repository = SpaceRepository(connection)
     users_repository = UserRepository(connection)
-    space = repository.find(space_id)
+    username = _get_logged_in_user()
 
+    if not _is_valid_space_id(space_id, repository):
+        return render_template('404.html', username=username), 404
+    
+    space = repository.find(space_id)
     trying_to_view_own_space = False
-    user = users_repository.find_by_id(space.user_id)
-    if "username" in session and session["username"] != None:
-        username = f"{session['username']}"
+    
+    if username == f"{session['username']}":
         if users_repository.find_by_username(username).id == space.user_id:
             trying_to_view_own_space = True
-    else:
-        username = "Not logged in"
+    
     return render_template(
         "single_space.html",
         username=username,
@@ -210,8 +208,9 @@ def get_individual_space(space_id):
         trying_to_view_own_space=trying_to_view_own_space,
         user = user,
     )
-
-
+def _is_valid_space_id(space_id, repository):
+    return int(space_id) <= len(repository.all())
+        
 # SPACES ROUTES
 
 
@@ -527,7 +526,7 @@ def form():
 def handle_http_error(e):
     username = _get_logged_in_user()
     error_code = e.code
-    return render_template(f'{error_code}.html', username=username), error_code
+    return render_template(f'404.html', username=username), error_code
 
 def _get_logged_in_user():
     if "username" in session and session["username"] is not None:
