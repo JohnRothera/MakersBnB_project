@@ -74,7 +74,7 @@ class BookingRepository:
         bookings = []
         for row in rows:
             # Convert requested_dates from string to list if stored as JSON
-            requested_dates = row["requested_dates"]
+            requested_dates = row["requested_dates_list"]
             if isinstance(requested_dates, str):
                 try:
                     requested_dates = json.loads(requested_dates)
