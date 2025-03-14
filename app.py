@@ -40,7 +40,7 @@ def update_dates_dictionary_from_requested_dates_list_mark_as_available(
     available_dates_dict, requested_dates_list
 ):
     for date in requested_dates_list:
-        available_dates_dict[date] = True
+        available_dates_dict[date[1:-1]] = True
     return available_dates_dict
 
 
