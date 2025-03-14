@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-
 class Booking:
     def __init__(
         self,
@@ -51,8 +50,10 @@ class Booking:
     def mark_as_approved(self):
         self.approved = True
 
-    def mark_as_pending(self):
+    def deny_booking(self):
+        
         self.approved = False
+
 
     @classmethod
     def from_database(
