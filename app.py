@@ -1,6 +1,6 @@
 import functools
 import os
-from flask import Flask, request, render_template, session, redirect, url_for
+from flask import Flask, request, render_template, session, redirect, url_for, abort
 from lib.database_connection import get_flask_database_connection
 from lib.user_repository import UserRepository
 from lib.user import User
@@ -211,15 +211,16 @@ def get_individual_space(space_id):
     users_repository = UserRepository(connection)
     username = _get_logged_in_user()
 
-    if not _is_valid_space_id(space_id, repository):
-        return render_template('404.html', username=username), 404
+    _is_valid_space_id(space_id, repository)
     
     space = repository.find(space_id)
     trying_to_view_own_space = False
-    
-    if username == f"{session['username']}":
-        if users_repository.find_by_username(username).id == space.user_id:
-            trying_to_view_own_space = True
+
+    trying_to_view_own_space = (
+    username == session.get('username') and 
+    users_repository.find_by_username(username).id == space.user_id
+    )
+
     user = users_repository.find_by_id(space.user_id)
     return render_template(
         "single_space.html",
@@ -229,7 +230,11 @@ def get_individual_space(space_id):
         user = user
     )
 def _is_valid_space_id(space_id, repository):
-    return int(space_id) <= len(repository.all())
+    try:
+        if int(space_id) > len(repository.all()):
+            abort(404)
+    except ValueError:
+        abort(404)
         
 # SPACES ROUTES
 
@@ -450,6 +455,8 @@ def manage_space(space_id):
     space_repository = SpaceRepository(connection)
     booking_repository = BookingRepository(connection)
     username = _get_logged_in_user()
+
+    _is_valid_space_id(space_id, space_repository)
 
     user = user_repository.find_by_username(username)
     bookings = booking_repository.find_by_space(space_id) #taking all booking for now
