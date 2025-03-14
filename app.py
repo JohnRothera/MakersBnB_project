@@ -200,13 +200,13 @@ def get_individual_space(space_id):
     if username == f"{session['username']}":
         if users_repository.find_by_username(username).id == space.user_id:
             trying_to_view_own_space = True
-    
+    user = users_repository.find_by_id(space.user_id)
     return render_template(
         "single_space.html",
         username=username,
         space=space,
         trying_to_view_own_space=trying_to_view_own_space,
-        user = user,
+        user = user
     )
 def _is_valid_space_id(space_id, repository):
     return int(space_id) <= len(repository.all())
