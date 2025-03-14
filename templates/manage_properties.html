@@ -28,7 +28,11 @@
 
             <h1 class="mb-4">Manage Your Properties</h1>
             <div class="no-bookings">
+                {% if spaces %}
                 <p>Have a look at your listed spaces, or add another!</p>
+                {% else %}
+                <p>You have no listed spaces, I think it might be time to add one!</p>
+                {% endif %}
                 <a href="/spaces/new" class="btn mt-3">List a New Space</a>
             </div>
                 <!-- Left side: Spaces -->
@@ -49,13 +53,6 @@
                         </div>
                     </div>
                     {% endfor %}
-                </div>
-                {% else %}
-                <div class="empty-state">
-                    <p>{{ user.username }} hasn't listed any spaces yet.</p>
-                    {% if logged_in_username == user.username %}
-                    <a href="/spaces/new" class="btn">List a New Space</a>
-                    {% endif %}
                 </div>
                 {% endif %}
             </div>

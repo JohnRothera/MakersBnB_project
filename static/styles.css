@@ -407,6 +407,7 @@ input[type="submit"]:hover {
 
 .preview-space-description {
     display: absolute;
+    margin-top: var(--spacing-md);
     margin-bottom: auto;
     /* border: 2px solid green; */
 }
