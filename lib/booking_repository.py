@@ -69,7 +69,7 @@ class BookingRepository:
 
     def find_by_space(self, space_id):
         rows = self._connection.execute(
-            "SELECT * FROM bookings WHERE space_id = %s", [space_id]
+            "SELECT * FROM bookings WHERE space_id = %s and bookings.approved = false" , [space_id]
         )
         bookings = []
         for row in rows:
