@@ -411,17 +411,24 @@ def manage_bookings():
 def manage_space(space_id):
     connection = get_flask_database_connection(app)
     user_repository = UserRepository(connection)
+    space_repository = SpaceRepository(connection)
     booking_repository = BookingRepository(connection)
     username = _get_logged_in_user()
 
     user = user_repository.find_by_username(username)
-    bookings = booking_repository.all() #taking all booking for now
+    bookings = booking_repository.find_by_space(space_id) #taking all booking for now
+    space = space_repository.find(space_id)
+    users = []
+    for booking in bookings:
+        users.append(user_repository.find_by_id(booking.user_id))
     logged_in_username = f"{session['username']}"
     if logged_in_username != username:
         return redirect("/")
     return render_template(
-        "manage_space.html.html",
+        "manage_space.html",
+        space=space,
         user=user,
+        users=users,
         space_id=space_id,
         username=username,
         logged_in_username=logged_in_username,

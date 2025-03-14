@@ -910,7 +910,7 @@ body {
   
   .responsive-table {
     li {
-      border-radius: 3px;
+      border-radius: 6px;
       padding: 25px 30px;
       display: flex;
       justify-content: space-between;
