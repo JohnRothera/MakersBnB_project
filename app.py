@@ -44,6 +44,19 @@ def update_dates_dictionary_from_requested_dates_list_mark_as_available(
     return available_dates_dict
 
 
+@app.route('/spaces/manage/approve/<booking_id>', methods=['GET'])
+def approve_booking_request(booking_id):
+    connection = get_flask_database_connection(app)
+    booking_repository = BookingRepository(connection)
+    booking = booking_repository.find(booking_id)
+    booking.mark_as_approved()
+    booking_repository.update_approval(booking_id, True)    
+    return redirect('/spaces')
+
+@app.route('/spaces/manage/deny', methods=['GET'])
+def deny_booking_request():
+    return redirect('/spaces')
+
 # WELCOME ROUTES
 @app.route("/", methods=["GET"])
 def welcome():
