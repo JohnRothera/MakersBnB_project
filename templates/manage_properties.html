@@ -37,13 +37,15 @@
                 <div class="preview-spaces-grid">
                     {% for space in spaces %}
                     <div class="preview-space-card">
-                        <div class="preview-space-card-details">
+                        <div class="preview-space-header">
                             <h2 style="margin-bottom: 0">{{ space.name }}</h2>
                             <p class="preview-space-location">{{ space.location }}</p>
+                        </div>
+                        <div class="preview-space-description">
                             <p class="preview-space-description">{{ space.description }}</p>
-                            <div class="space-actions">
-                                <a href="/spaces/{{ space.id }}" class="btn btn-secondary">View Details</a>
-                            </div>
+                        </div>
+                        <div class="preview-space-action">
+                            <a href="/spaces/manage/{{ space.id }}" class="btn btn-secondary">Manage Bookings</a>
                         </div>
                     </div>
                     {% endfor %}
