@@ -5,6 +5,23 @@
 </head>
 
 <body>
+
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo">MakersBnB</a>
+            <div>
+                {% if username == "Not logged in"%}
+                <a href="/login" class="btn btn-secondary mr-2">Login</a>
+                <a href="/register" class="btn">Register</a>
+                {% else %}
+                <span class="mr-3">Welcome, {{username}}</span>
+                <a href="/user/{{username}}" class="btn btn-secondary">View Profile</a>
+                <a href="/logout" class="btn btn-secondary">Log Out</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
     <div class="container">
     <h2>Responsive Tables Using LI <small>Triggers on 767px</small></h2>
     <ul class="responsive-table">
@@ -23,4 +40,17 @@
       
     </ul>
   </div>
+
+    <footer>
+        <div class="container footer-content">
+            <p>© 2025 MakersBnB, Inc.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/spaces">Spaces</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+        </div>
+    </footer>
+
 </body>

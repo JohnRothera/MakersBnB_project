@@ -187,7 +187,9 @@ def get_individual_space(space_id):
     repository = SpaceRepository(connection)
     users_repository = UserRepository(connection)
     space = repository.find(space_id)
+
     trying_to_view_own_space = False
+    user = users_repository.find_by_id(space.user_id)
     if "username" in session and session["username"] != None:
         username = f"{session['username']}"
         if users_repository.find_by_username(username).id == space.user_id:
@@ -199,6 +201,7 @@ def get_individual_space(space_id):
         username=username,
         space=space,
         trying_to_view_own_space=trying_to_view_own_space,
+        user = user,
     )
 
 
@@ -408,21 +411,23 @@ def manage_bookings():
 def manage_space(space_id):
     connection = get_flask_database_connection(app)
     user_repository = UserRepository(connection)
-    space_repository = SpaceRepository(connection)
+    booking_repository = BookingRepository(connection)
     username = _get_logged_in_user()
 
     user = user_repository.find_by_username(username)
-    spaces = space_repository.find_by_user_id(user.id)
+    bookings = booking_repository.all() #taking all booking for now
     logged_in_username = f"{session['username']}"
     if logged_in_username != username:
         return redirect("/")
     return render_template(
         "manage_space.html.html",
         user=user,
-        spaces=spaces,
+        space_id=space_id,
         username=username,
         logged_in_username=logged_in_username,
+        bookings = bookings,
     )
+
 
 # MANAGE SPACE ROUTE
 
