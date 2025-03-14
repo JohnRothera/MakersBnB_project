@@ -29,11 +29,18 @@ def login_required(func):
     return secure_function
 
 
-def update_dates_dictionary_from_requested_dates_list(
+def update_dates_dictionary_from_requested_dates_list_mark_dates_unavailable(
     available_dates_dict, requested_dates_list
 ):
     for date in requested_dates_list:
         available_dates_dict[date] = False
+    return available_dates_dict
+
+def update_dates_dictionary_from_requested_dates_list_mark_as_available(
+    available_dates_dict, requested_dates_list
+):
+    for date in requested_dates_list:
+        available_dates_dict[date] = True
     return available_dates_dict
 
 
@@ -199,6 +206,7 @@ def get_individual_space(space_id):
         username=username,
         space=space,
         trying_to_view_own_space=trying_to_view_own_space,
+        user = user,
     )
 def _is_valid_space_id(space_id, repository):
     return int(space_id) <= len(repository.all())
@@ -322,13 +330,25 @@ def confirm_booking(space_id):
     # Save booking to database
     booking = booking_repository.create(booking)
 
-    updated_dates_dict = update_dates_dictionary_from_requested_dates_list(
+    updated_dates_dict = update_dates_dictionary_from_requested_dates_list_mark_dates_unavailable(
         space.dates_available_dict, booking.requested_dates_list
     )
     space_repository.update_available_dates(updated_dates_dict, booking.space_id)
     # Redirect to confirmation page
     return redirect(f"/bookings/{booking.id}/confirmation")
 
+# Route contains this info somehow /user/<username>/manage/<space_id>
+def restore_availability_upon_denied_booking_request(space_id, booking_id):
+    connection = get_flask_database_connection(app)
+    space_repository = SpaceRepository(connection)
+    booking_repository = BookingRepository(connection)
+    booking = booking_repository.find(booking_id)
+    booking.deny_booking()
+    space = space_repository.find(space_id)
+    updated_dates_dict = update_dates_dictionary_from_requested_dates_list_mark_as_available(
+        space.dates_available_dict, booking.requested_dates_list
+    )
+    space_repository.update_available_dates(updated_dates_dict, booking.space_id)
 
 @app.route("/bookings/<booking_id>/confirmation", methods=["GET"])
 @login_required
@@ -381,10 +401,62 @@ def user_bookings(username):
 @app.route("/manage", methods=["GET"])
 @login_required
 def manage_bookings():
-    return render_template("manage_properties.html")
+    connection = get_flask_database_connection(app)
+    user_repository = UserRepository(connection)
+    space_repository = SpaceRepository(connection)
+    username = _get_logged_in_user()
+
+    user = user_repository.find_by_username(username)
+    spaces = space_repository.find_by_user_id(user.id)
+    logged_in_username = f"{session['username']}"
+    if logged_in_username != username:
+        return redirect("/")
+    return render_template(
+        "manage_properties.html",
+        user=user,
+        spaces=spaces,
+        username=username,
+        logged_in_username=logged_in_username,
+    )
+
+
 
 
 # ABOUT ROUTE
+
+# MANAGE SPACE ROUTE
+
+@app.route("/spaces/manage/<space_id>", methods=["GET"])
+@login_required
+def manage_space(space_id):
+    connection = get_flask_database_connection(app)
+    user_repository = UserRepository(connection)
+    space_repository = SpaceRepository(connection)
+    booking_repository = BookingRepository(connection)
+    username = _get_logged_in_user()
+
+    user = user_repository.find_by_username(username)
+    bookings = booking_repository.find_by_space(space_id) #taking all booking for now
+    space = space_repository.find(space_id)
+    users = []
+    for booking in bookings:
+        users.append(user_repository.find_by_id(booking.user_id))
+    logged_in_username = f"{session['username']}"
+    if logged_in_username != username:
+        return redirect("/")
+    return render_template(
+        "manage_space.html",
+        space=space,
+        user=user,
+        users=users,
+        space_id=space_id,
+        username=username,
+        logged_in_username=logged_in_username,
+        bookings = bookings,
+    )
+
+
+# MANAGE SPACE ROUTE
 
 # CONTACT ROUTE
 

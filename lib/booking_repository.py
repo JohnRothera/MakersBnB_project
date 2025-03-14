@@ -69,12 +69,12 @@ class BookingRepository:
 
     def find_by_space(self, space_id):
         rows = self._connection.execute(
-            "SELECT * FROM bookings WHERE space_id = %s", [space_id]
+            "SELECT * FROM bookings WHERE space_id = %s and bookings.approved = false" , [space_id]
         )
         bookings = []
         for row in rows:
             # Convert requested_dates from string to list if stored as JSON
-            requested_dates = row["requested_dates"]
+            requested_dates = row["requested_dates_list"]
             if isinstance(requested_dates, str):
                 try:
                     requested_dates = json.loads(requested_dates)
@@ -150,8 +150,3 @@ class BookingRepository:
 
     def delete(self, booking_id):
         self._connection.execute("DELETE FROM bookings WHERE id = %s", [booking_id])
-
-    def update_status(self, booking_id, new_status):
-        self._connection.execute(
-            "UPDATE bookings SET status = %s WHERE id = %s", [new_status, booking_id]
-        )

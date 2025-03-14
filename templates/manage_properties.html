@@ -27,7 +27,36 @@
             </div>
 
             <h1 class="mb-4">Manage Your Properties</h1>
-
+            <div class="no-bookings">
+                <p>Have a look at your listed spaces, or add another!</p>
+                <a href="/spaces/new" class="btn mt-3">List a New Space</a>
+            </div>
+                <!-- Left side: Spaces -->
+            <div class="preview-spaces-container">
+                {% if spaces %}
+                <div class="preview-spaces-grid">
+                    {% for space in spaces %}
+                    <div class="preview-space-card">
+                        <div class="preview-space-card-details">
+                            <h2 style="margin-bottom: 0">{{ space.name }}</h2>
+                            <p class="preview-space-location">{{ space.location }}</p>
+                            <p class="preview-space-description">{{ space.description }}</p>
+                            <div class="space-actions">
+                                <a href="/spaces/{{ space.id }}" class="btn btn-secondary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>{{ user.username }} hasn't listed any spaces yet.</p>
+                    {% if logged_in_username == user.username %}
+                    <a href="/spaces/new" class="btn">List a New Space</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
             {% if booking_details %}
             {% for item in booking_details %}
             <div class="booking-request">
@@ -73,7 +102,6 @@
             <div class="no-bookings">
                 <h2>No booking requests yet</h2>
                 <p>When guests request to book one of your spaces, they'll appear here.</p>
-                <a href="/spaces/new" class="btn mt-3">List a New Space</a>
             </div>
             {% endif %}
         </div>
