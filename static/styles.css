@@ -508,6 +508,11 @@ footer {
     flex-wrap: wrap;
 }
 
+.footer-links {
+    margin: auto 0;
+    white-space: nowrap;
+}
+
 .footer-links a {
     margin-right: var(--spacing-md);
 }

@@ -30,33 +30,6 @@
 
     <main>
         <div class="container vm-25">
-            <!-- Left side: Spaces -->
-            <div class="preview-spaces-container">
-                {% if spaces %}
-                <div class="preview-spaces-grid">
-                    {% for space in spaces %}
-                    <div class="preview-space-card">
-                        <div class="preview-space-card-details">
-                            <h2 style="margin-bottom: 0">{{ space.name }}</h2>
-                            <p class="preview-space-location">{{ space.location }}</p>
-                            <p class="preview-space-description">{{ space.description }}</p>
-                            <div class="space-actions">
-                                <a href="/spaces/{{ space.id }}" class="btn btn-secondary">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <div class="empty-state">
-                    <p>{{ user.username }} hasn't listed any spaces yet.</p>
-                    {% if logged_in_username == user.username %}
-                    <a href="/spaces/new" class="btn">List a New Space</a>
-                    {% endif %}
-                </div>
-                {% endif %}
-            </div>
-
             <!-- Right side: Booking Requests -->
             {% if logged_in_username == user.username %}
             <div class="bookings-container">

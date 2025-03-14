@@ -380,10 +380,51 @@ def user_bookings(username):
 @app.route("/manage", methods=["GET"])
 @login_required
 def manage_bookings():
-    return render_template("manage_properties.html")
+    connection = get_flask_database_connection(app)
+    user_repository = UserRepository(connection)
+    space_repository = SpaceRepository(connection)
+    username = _get_logged_in_user()
+
+    user = user_repository.find_by_username(username)
+    spaces = space_repository.find_by_user_id(user.id)
+    logged_in_username = f"{session['username']}"
+    if logged_in_username != username:
+        return redirect("/")
+    return render_template(
+        "manage_properties.html",
+        user=user,
+        spaces=spaces,
+        username=username,
+        logged_in_username=logged_in_username,
+    )
 
 
 # ABOUT ROUTE
+
+# MANAGE SPACE ROUTE
+
+@app.route("/spaces/manage/<space_id>", methods=["GET"])
+@login_required
+def manage_space(space_id):
+    connection = get_flask_database_connection(app)
+    user_repository = UserRepository(connection)
+    space_repository = SpaceRepository(connection)
+    username = _get_logged_in_user()
+
+    user = user_repository.find_by_username(username)
+    spaces = space_repository.find_by_user_id(user.id)
+    logged_in_username = f"{session['username']}"
+    if logged_in_username != username:
+        return redirect("/")
+    return render_template(
+        "manage_space.html.html",
+        user=user,
+        spaces=spaces,
+        username=username,
+        logged_in_username=logged_in_username,
+    )
+
+# MANAGE SPACE ROUTE
 
 # CONTACT ROUTE
 
